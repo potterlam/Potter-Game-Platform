@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game Library — Bookshelf</title>
+  <link rel="stylesheet" href="/css/library.css">
+</head>
+<body>
+  <header class="lib-header">
+    <div class="lib-header-left">
+      <h1>🏛️ 遊戲書庫</h1>
+    </div>
+    <div class="lib-header-right">
+      <span class="user-badge" id="user-info"></span>
+      <a href="/admin.html" class="btn-small" id="admin-link" style="display:none;">⚙️ Admin</a>
+      <button class="btn-small" id="logout-btn">Logout</button>
+    </div>
+  </header>
+
+  <div id="loading" class="loading">Loading...</div>
+
+  <div class="bookshelf-container" id="bookshelf-area" style="display:none;">
+    <p class="shelf-title">📚 Choose a book to enter its world 選一本書進入遊戲世界</p>
+
+    <div class="bookshelf">
+      <div class="book book-purple" data-href="/games/english-pronunciation/">
+        <div class="book-body">
+          <div class="book-emoji">📖</div>
+          <div class="book-title">English Pronunciation Adventure</div>
+          <div class="book-desc">英語發音冒險</div>
+        </div>
+      </div>
+
+      <div class="book book-blue" data-href="/games/maths-master/">
+        <div class="book-body">
+          <div class="book-emoji">🔢</div>
+          <div class="book-title">Maths Master</div>
+          <div class="book-desc">數學大師</div>
+        </div>
+      </div>
+
+      <div class="book book-green" data-href="/games/vowel-quest/">
+        <div class="book-body">
+          <div class="book-emoji">🏰</div>
+          <div class="book-title">Vowel Quest</div>
+          <div class="book-desc">元音城堡</div>
+        </div>
+      </div>
+
+      <div class="book book-red" data-href="/games/shodo-dojo/">
+        <div class="book-body">
+          <div class="book-emoji">🏯</div>
+          <div class="book-title">繁中道場</div>
+          <div class="book-desc">Shodo Dojo</div>
+        </div>
+      </div>
+
+      <div class="book book-crimson" data-href="/games/hk-memory-match/">
+        <div class="book-body">
+          <div class="book-emoji">🀄</div>
+          <div class="book-title">香港記憶配對</div>
+          <div class="book-desc">HK Memory Match</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="shelf-plank"></div>
+  </div>
+
+  <script src="/js/library.js"></script>
+</body>
+</html>

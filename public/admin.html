@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game Library — Admin</title>
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+  <header class="admin-header">
+    <h1>⚙️ Admin Dashboard</h1>
+    <div class="header-actions">
+      <a href="/library.html" class="btn-small">🏠 Back to Library</a>
+      <button class="btn-small" id="logout-btn">Logout</button>
+    </div>
+  </header>
+
+  <div class="admin-content">
+    <div class="stats-row" id="stats-row">
+      <div class="stat-card"><div class="stat-value" id="stat-total">-</div><div class="stat-label">Total Users</div></div>
+      <div class="stat-card"><div class="stat-value" id="stat-admin">-</div><div class="stat-label">Admins</div></div>
+      <div class="stat-card"><div class="stat-value" id="stat-banned">-</div><div class="stat-label">Banned</div></div>
+    </div>
+
+    <div class="admin-tabs">
+      <button class="active" data-panel="users-panel">👥 Users</button>
+      <button data-panel="logs-panel">📋 Login Logs</button>
+    </div>
+
+    <!-- Users Panel -->
+    <div id="users-panel" class="panel active">
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Display Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th>Logins</th>
+              <th>Last Login</th>
+              <th>Joined</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="users-tbody">
+            <tr><td colspan="9" class="loading-text">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination" id="users-pagination"></div>
+    </div>
+
+    <!-- Logs Panel -->
+    <div id="logs-panel" class="panel">
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Email</th>
+              <th>Name</th>
+              <th>IP</th>
+              <th>Result</th>
+            </tr>
+          </thead>
+          <tbody id="logs-tbody">
+            <tr><td colspan="5" class="loading-text">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/admin.js"></script>
+</body>
+</html>

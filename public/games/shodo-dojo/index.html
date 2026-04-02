@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>書道場 — Shodo Dojo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+TC:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ==================== TITLE SCREEN ==================== -->
+  <div id="title-screen" class="screen active">
+    <div class="dojo-gate">
+      <div class="gate-pillar left"></div>
+      <div class="gate-roof"></div>
+      <div class="gate-pillar right"></div>
+    </div>
+    <div class="title-content">
+      <div class="lantern left-lantern">燈</div>
+      <h1 class="title-text">
+        <span class="title-char">書</span>
+        <span class="title-char">道</span>
+        <span class="title-char">場</span>
+      </h1>
+      <div class="lantern right-lantern">燈</div>
+      <p class="title-subtitle" data-i18n="titleSubtitle">Shodo Dojo — 繁體字書寫修行</p>
+      <p class="title-desc" data-i18n="titleDesc">挑戰道場前輩，練返一手好字</p>
+      <button id="btn-enter-dojo" class="btn-dojo btn-primary" onclick="game.showScreen('level-select')">
+        <span data-i18n="enterDojo">進入道場</span>
+      </button>
+      <div class="title-controls">
+        <button id="btn-settings-title" class="btn-icon" onclick="game.toggleSettings()" title="設定">⚙️</button>
+        <button id="btn-rules" class="btn-icon" onclick="game.showScreen('rules-screen')" title="筆順規則">📜</button>
+        <button id="btn-lang" class="btn-icon" onclick="game.toggleLang()" title="語言 / Language">🌐</button>
+      </div>
+    </div>
+    <div class="bamboo-left"></div>
+    <div class="bamboo-right"></div>
+  </div>
+
+  <!-- ==================== RULES SCREEN ==================== -->
+  <div id="rules-screen" class="screen">
+    <div class="scroll-container">
+      <h2 class="scroll-title" data-i18n="rulesTitle">📜 書道七則 — 筆順基本規律</h2>
+      <div class="rules-list" id="rules-list">
+        <!-- Populated by JS -->
+      </div>
+      <div class="stroke-glossary">
+        <h3>基本筆畫</h3>
+        <div class="stroke-grid" id="stroke-grid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+      <button class="btn-dojo btn-secondary" onclick="game.showScreen('title-screen')" data-i18n="btnBack">返回</button>
+    </div>
+  </div>
+
+  <!-- ==================== LEVEL SELECT ==================== -->
+  <div id="level-select" class="screen">
+    <div class="dojo-interior">
+      <h2 class="section-title" data-i18n="selectStage">選擇修行階段</h2>
+      <div class="level-cards">
+        <div class="level-card" id="level-card-1" onclick="game.startLevel('level1')">
+          <div class="level-rank">初</div>
+          <div class="level-info">
+            <h3>初級 — 基礎筆畫</h3>
+            <p>對手：<strong>阿明師兄</strong></p>
+            <p class="level-desc">學習22個基本漢字的正確書寫方法</p>
+            <div class="level-score" id="score-level1"></div>
+          </div>
+          <div class="level-opponent">
+            <div class="avatar-small avatar-level1"></div>
+          </div>
+        </div>
+        <div class="level-card locked" id="level-card-2" onclick="game.startLevel('level2')">
+          <div class="level-rank">中</div>
+          <div class="level-info">
+            <h3>中級 — 自然萬物</h3>
+            <p>對手：<strong>小雲師姐</strong></p>
+            <p class="level-desc">書寫與自然季節相關的繁體字</p>
+            <div class="level-score" id="score-level2"></div>
+          </div>
+          <div class="level-opponent">
+            <div class="avatar-small avatar-level2"></div>
+          </div>
+          <div class="lock-overlay">🔒</div>
+        </div>
+        <div class="level-card locked" id="level-card-3" onclick="game.startLevel('level3')">
+          <div class="level-rank">高</div>
+          <div class="level-info">
+            <h3>高級 — 武道精神</h3>
+            <p>對手：<strong>墨道師父</strong></p>
+            <p class="level-desc">挑戰最複雜的繁體字，體悟武道精神</p>
+            <div class="level-score" id="score-level3"></div>
+          </div>
+          <div class="level-opponent">
+            <div class="avatar-small avatar-level3"></div>
+          </div>
+          <div class="lock-overlay">🔒</div>
+        </div>
+        <div class="level-card custom-level" id="level-card-custom" onclick="game.startLevel('custom')" style="display:none;">
+          <div class="level-rank">自</div>
+          <div class="level-info">
+            <h3 id="custom-level-title">自訂關卡</h3>
+            <p>對手：<strong>阿明師兄</strong></p>
+            <p class="level-desc" id="custom-level-desc">自訂嘅練習題庫</p>
+            <div class="level-score" id="score-custom"></div>
+          </div>
+          <div class="level-opponent">
+            <div class="avatar-small avatar-level1"></div>
+          </div>
+        </div>
+      </div>
+      <div class="custom-level-controls">
+        <button class="btn-dojo btn-secondary btn-small-dojo" onclick="game.loadCustomFromFile()" title="載入自訂題庫" data-i18n="btnLoadBank">📂 載入題庫</button>
+        <a href="tools/generate.html" target="_blank" class="btn-dojo btn-secondary btn-small-dojo" title="打開產生器" data-i18n="btnGenerator">📝 題庫產生器</a>
+      </div>
+      <input type="file" id="custom-file-input" accept=".js,.json" style="display:none;" onchange="game.handleCustomFile(event)">
+      <button class="btn-dojo btn-secondary" onclick="game.showScreen('title-screen')" data-i18n="btnBackEntrance">返回入口</button>
+    </div>
+  </div>
+
+  <!-- ==================== GAME SCREEN ==================== -->
+  <div id="game-screen" class="screen">
+    <!-- Top bar -->
+    <div class="game-top-bar">
+      <div class="top-left">
+        <span class="level-badge" id="game-level-badge"></span>
+        <span class="char-counter" id="char-counter">1 / 22</span>
+      </div>
+      <div class="top-center">
+        <div class="progress-bar-container">
+          <div class="progress-bar" id="game-progress-bar"></div>
+        </div>
+      </div>
+      <div class="top-right">
+        <span class="score-display">🏆 <span id="game-score">0</span></span>
+        <button class="btn-icon" onclick="game.toggleSettings()" title="設定">⚙️</button>
+        <button class="btn-icon" onclick="game.confirmQuit()" title="退出">✖</button>
+      </div>
+    </div>
+
+    <!-- Opponent section -->
+    <div class="opponent-section">
+      <div class="opponent-avatar" id="opponent-avatar">
+        <div class="avatar-body"></div>
+        <div class="avatar-head"></div>
+        <div class="avatar-expression" id="avatar-expression">😊</div>
+      </div>
+      <div class="dialogue-bubble" id="dialogue-bubble">
+        <span class="opponent-name" id="opponent-name"></span>
+        <p class="dialogue-text" id="dialogue-text">歡迎來到書道場！</p>
+      </div>
+    </div>
+
+    <!-- Main game area -->
+    <div class="game-main">
+      <!-- Character info panel -->
+      <div class="info-panel">
+        <div class="char-display">
+          <span class="char-emoji" id="char-emoji"></span>
+          <div class="char-big" id="char-display-big"></div>
+        </div>
+        <div class="char-details">
+          <div class="detail-row">
+            <span class="detail-label" data-i18n="labelJyutping">粵拼</span>
+            <span class="detail-value" id="char-jyutping"></span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label" data-i18n="labelMeaning">意思</span>
+            <span class="detail-value" id="char-meaning"></span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label" data-i18n="labelRadical">部首</span>
+            <span class="detail-value" id="char-radical"></span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label" data-i18n="labelStrokes">筆畫</span>
+            <span class="detail-value" id="char-strokes"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Writing area -->
+      <div class="writing-area">
+        <div class="writing-header">
+          <span id="writing-status" data-i18n="watchDemo">觀看示範</span>
+        </div>
+        <!-- Demo container (shows stroke animation) -->
+        <div class="writer-container" id="demo-container">
+          <div id="hanzi-demo" class="hanzi-target"></div>
+        </div>
+        <!-- Quiz container (user writes) -->
+        <div class="writer-container" id="quiz-container" style="display:none;">
+          <div id="hanzi-quiz" class="hanzi-target"></div>
+        </div>
+        <div class="writing-actions">
+          <button class="btn-dojo btn-action" id="btn-demo" onclick="game.playDemo()" data-i18n="btnDemo">
+            ▶️ 示範
+          </button>
+          <button class="btn-dojo btn-action" id="btn-start-quiz" onclick="game.startQuiz()" data-i18n="btnStartWrite">
+            ✏️ 開始書寫
+          </button>
+          <button class="btn-dojo btn-action" id="btn-next" onclick="game.nextCharacter()" style="display:none;" data-i18n="btnNext">
+            ➡️ 下一個
+          </button>
+        </div>
+      </div>
+
+      <!-- Hints panel -->
+      <div class="hints-panel">
+        <h3 data-i18n="hintsTitle">💡 提示</h3>
+        <div class="hints-list" id="hints-list">
+          <p class="hint-placeholder" data-i18n="hintPlaceholder">撞下面個掂攞提示</p>
+        </div>
+        <button class="btn-dojo btn-hint" id="btn-hint" onclick="game.showHint()" data-i18n="btnGetHint">
+          💡 攞提示（-10分）
+        </button>
+        <button class="btn-dojo btn-speak" onclick="game.speakCharacter()" data-i18n="btnListen">
+          🔊 聽讀音
+        </button>
+        <div class="demo-toggle">
+          <label class="toggle-label">
+            <input type="checkbox" id="toggle-demo" checked onchange="game.toggleAutoDemo(this.checked)">
+            <span class="toggle-slider"></span>
+            自動播筆順示範
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stroke feedback overlay -->
+    <div class="stroke-feedback" id="stroke-feedback"></div>
+  </div>
+
+  <!-- ==================== RESULTS SCREEN ==================== -->
+  <div id="results-screen" class="screen">
+    <div class="results-container">
+      <div class="results-stamp" id="results-stamp"></div>
+      <h2 class="results-title" id="results-title"></h2>
+      <div class="opponent-result-avatar" id="result-avatar">
+        <div class="avatar-expression" id="result-expression"></div>
+      </div>
+      <p class="results-dialogue" id="results-dialogue"></p>
+      <div class="results-stats">
+        <div class="stat">
+          <span class="stat-label" data-i18n="statScore">總分</span>
+          <span class="stat-value" id="result-score">0</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label" data-i18n="statChars">完成字數</span>
+          <span class="stat-value" id="result-chars">0</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label" data-i18n="statMistakes">總失誤</span>
+          <span class="stat-value" id="result-mistakes">0</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label" data-i18n="statHints">使用提示</span>
+          <span class="stat-value" id="result-hints">0</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label" data-i18n="statPerfects">完美書寫</span>
+          <span class="stat-value" id="result-perfects">0</span>
+        </div>
+      </div>
+      <div class="results-actions">
+        <button class="btn-dojo btn-primary" id="btn-retry" onclick="game.retryLevel()" data-i18n="btnRetry">🔄 再次挑戰</button>
+        <button class="btn-dojo btn-secondary" id="btn-next-level" onclick="game.goNextLevel()" style="display:none;" data-i18n="btnNextLevel">➡️ 下一關</button>
+        <button class="btn-dojo btn-secondary" onclick="game.showScreen('level-select')" data-i18n="btnSelectLevel">📋 選擇關卡</button>
+        <button class="btn-dojo btn-secondary" onclick="game.showScreen('title-screen')" data-i18n="btnBackLobby">🏠 返回大廳</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SETTINGS MODAL ==================== -->
+  <div id="settings-modal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <h2 data-i18n="settingsTitle">⚙️ 設定</h2>
+      <div class="setting-row">
+        <label>🎵 背景音樂</label>
+        <input type="range" id="bgm-volume" min="0" max="100" value="30" oninput="game.setBgmVolume(this.value)">
+        <span id="bgm-volume-label">30%</span>
+      </div>
+      <div class="setting-row">
+        <label>🔊 音效</label>
+        <input type="range" id="sfx-volume" min="0" max="100" value="50" oninput="game.setSfxVolume(this.value)">
+        <span id="sfx-volume-label">50%</span>
+      </div>
+      <div class="setting-row">
+        <label>🗣️ 語音發音</label>
+        <label class="toggle-label">
+          <input type="checkbox" id="toggle-voice" checked onchange="game.toggleVoice(this.checked)">
+          <span class="toggle-slider"></span>
+          啟用
+        </label>
+      </div>
+      <div class="setting-row">
+        <label>✏️ 顯示字體輪廓</label>
+        <label class="toggle-label">
+          <input type="checkbox" id="toggle-outline" checked onchange="game.toggleOutline(this.checked)">
+          <span class="toggle-slider"></span>
+          啟用
+        </label>
+      </div>
+      <button class="btn-dojo btn-secondary" onclick="game.toggleSettings()">關閉</button>
+    </div>
+  </div>
+
+  <!-- ==================== CONFIRM QUIT MODAL ==================== -->
+  <div id="quit-modal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <h2 data-i18n="quitTitle">確定要退出？</h2>
+      <p data-i18n="quitDesc">而家嘅進度唳會保存㔗。</p>
+      <div class="modal-actions">
+        <button class="btn-dojo btn-primary" onclick="game.quitLevel()" data-i18n="btnConfirmQuit">確定退出</button>
+        <button class="btn-dojo btn-secondary" onclick="game.quitToLobby()" data-i18n="btnBackLobby">🏠 返回大廳</button>
+        <button class="btn-dojo btn-secondary" onclick="game.closeQuitModal()" data-i18n="btnContinue">繼續修行</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
+  <script src="js/characters.js"></script>
+  <script src="js/opponents.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    // Load custom stage from localStorage if available
+    (function() {
+      const saved = localStorage.getItem('shodo-custom-stage');
+      if (saved) {
+        try { game.loadCustomStage(JSON.parse(saved)); } catch(e) {}
+      }
+    })();
+  </script>
+</body>
+</html>

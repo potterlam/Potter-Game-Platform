@@ -1,0 +1,201 @@
+================================================================
+  English Pronunciation Adventure — Change Log
+================================================================
+
+  V1  s1155322/past-tense-game
+      English Past Tense Pronunciation Adventure Game
+      Initial prototype with mini-games and story-based adventure.
+
+  V2  potterlam/past-tense-game
+      English Past Tense Pronunciation Adventure Game
+      Revised docs and structure for classroom use.
+
+  V3  potterlam/ed-pronunciation-game
+      Past Tense -ED Pronunciation Game
+      Data-driven, modular teaching version for -ed pronunciation.
+
+  V4  potterlam/English-Pronunciation-Adventure
+      English Pronunciation Adventure
+      Final branded version for FYP submission.
+
+================================================================
+
+
+────────────────────────────────────────────────────────────────
+  V1 → V2  |  Repository Migration & Classroom Reframing
+────────────────────────────────────────────────────────────────
+
+[Project Positioning]
+  V1: Framed as an "English past tense pronunciation adventure
+      game" combining several mini-games and a story line.
+  V2: Reworded in bilingual Chinese–English to emphasise that
+      it is an EdUHK student-developed educational web game
+      designed for classroom use.
+
+[Game Flow Description]
+  V1: Described four mini-games and the overall flow mainly
+      from a gameplay perspective.
+  V2: Reorganised into a clearer "teaching → practice →
+      challenge → final boss" sequence that teachers and
+      students can easily understand.
+
+[Learning Objectives]
+  V1: Focused on practising the three past tense endings
+      /t/, /d/, and /ɪd/ through gameplay.
+  V2: Made the learning goals more explicit, highlighting
+      improved phonological awareness and accuracy of past
+      tense final consonant pronunciation.
+
+[File & Folder Structure]
+  V1: Repository structure presented in a more technical manner.
+  V2: Summarised into a high-level structure (index.html, css,
+      js, assets, data) that non-technical teachers can navigate
+      and deploy more easily.
+
+[Running Instructions]
+  V1: Mainly assumed a developer perspective.
+  V2: Added simple instructions on cloning the repository and
+      opening index.html directly, making classroom execution
+      straightforward.
+
+[Technology Description]
+  V1: Listed underlying technologies and APIs in a
+      developer-oriented way.
+  V2: Rephrased as an easily understandable stack (HTML5, CSS3,
+      JavaScript, Web Audio API, HTML5 Video) for reports and
+      presentations.
+
+[Browser Support]
+  V1: Implicit or scattered mentions.
+  V2: Explicitly documented support for Chrome, Firefox, Safari
+      and Edge to address compatibility in school environments.
+
+
+────────────────────────────────────────────────────────────────
+  V2 → V3  |  Data-Driven Modular Teaching Version
+────────────────────────────────────────────────────────────────
+
+[Pedagogical Focus]
+  V2: Presented as a general "past tense pronunciation
+      adventure".
+  V3: Narrowed to a focused "Past Tense -ED Pronunciation Game"
+      explicitly targeting /t/, /d/, /ɪd/ endings for primary
+      students.
+
+[Learning Outcomes]
+  V2: Emphasised fun and practice opportunities.
+  V3: Added concrete learning outcomes such as categorisation
+      skills, rule generalisation, and application to unseen
+      vocabulary.
+
+[Game Modules]
+  V2: Four mini-games existed but were less formally documented
+      as separate modules.
+  V3: Clearly modularised the four mini-games (Sorting Puzzle,
+      Falling Words, Multiple Choice, Boss Fight), each mapped
+      to specific sub-skills.
+
+[Parameterisation]
+  V2: Game parameters were largely embedded in code.
+  V3: Introduced configurable parameters (rounds, number of
+      questions, time limits) to support differentiated
+      difficulty and research conditions.
+
+[Data-Driven Design]
+  V2: Words and items were more scattered in the code.
+  V3: Introduced "data/words-ed.json" as a central dataset of
+      55 words, including lemma, IPA, pronunciation category,
+      audio path, example sentence, and difficulty.
+
+[Multimedia Resources]
+  V2: Audio and video assets were less systematically organised.
+  V3: Standardised assets into "assets/audio/" for word
+      recordings and "assets/video/" for intro and ending
+      videos, with guidance on producing these resources.
+
+[Teacher Guidance]
+  V2: Focused mainly on how to play the game.
+  V3: Added a "For Teachers" section explaining how to adjust
+      difficulty, track and store scores, and integrate the
+      game into lessons.
+
+[Future Development]
+  V2: Future work was mainly game-content oriented.
+  V3: Outlined system-level enhancements such as leaderboards,
+      badges, user accounts, multi-language support and a
+      teacher dashboard.
+
+
+────────────────────────────────────────────────────────────────
+  V3 → V4  |  Final Branded FYP Version
+────────────────────────────────────────────────────────────────
+
+[Project Name & Branding]
+  V3: Name emphasised its role as a research teaching tool
+      ("Past Tense -ED Pronunciation Game").
+  V4: Renamed to "English Pronunciation Adventure", providing
+      a product-like and publishable title suitable for the
+      final FYP version.
+
+[Positioning]
+  V3: Highlighted a focused -ed pronunciation game.
+  V4: Retained the core focus on past tense /t/, /d/, /ɪd/
+      while framing the experience as a broader pronunciation
+      adventure with a narrative.
+
+[Repository Role]
+  V3: Served as an intermediate teaching and research version.
+  V4: Serves as the final, official repository, integrating
+      Chinese documentation, technical details and narrative
+      for teachers and examiners.
+
+[Documentation & Structure]
+  V3: Documentation mainly supported experimental teaching.
+  V4: Reorganised into systematic sections (game features,
+      learning objectives, game stages, technical specs,
+      browser support) for direct use in the thesis.
+
+[Execution & Deployment]
+  V3: Already included basic run instructions.
+  V4: Further standardised the deployment process as
+      "clone → open index.html", defining a clear procedure
+      for assessment and demonstrations. GitHub Pages enabled
+      for public online access.
+
+[Pedagogical Flow]
+  V3: Implemented four mini-game stages.
+  V4: Clarified the four stages as a pedagogical flow of
+      teaching, practice, challenge and final boss, making
+      the learning path transparent.
+
+[Technology Stack]
+  V3: Used HTML5 / CSS3 / JavaScript / Web Audio / HTML5 Video.
+  V4: Explicitly listed this stack as part of the formal system
+      specification in the final documentation.
+
+[Licensing & Usage Context]
+  V3: Focused on experimental and classroom use.
+  V4: Explicitly framed the project as an educational resource
+      developed within EdUHK, clarifying its educational context
+      and intended use.
+
+[V4-Specific Feature Additions]
+  · Two practice modes: Past tense -ed AND suffix -s / -es / -ies
+  · Fairy rules tutorial (animated 2-page pronunciation guide)
+  · Per-game background images (cliff, cave, wizard-lair, boss-arena)
+  · Settings panel with BGM & SFX volume sliders
+  · Achievement / artifact collection panel
+  · Character sprites in intro scenes, cutscenes, and games
+  · Generic artifact names (Time Controller, Knowledge Gem,
+    Explorer's Eye) — mode-agnostic story
+  · Bilingual zh-TW / English with one-click toggle
+  · Boss fight floating bubble animation fix
+  · Sword slash player positioning fix
+  · Ending video integration
+  · Live deployment: potterlam.github.io/English-Pronunciation-Adventure/
+
+
+================================================================
+  Live URL: https://potterlam.github.io/English-Pronunciation-Adventure/
+  Repository: https://github.com/potterlam/English-Pronunciation-Adventure
+================================================================

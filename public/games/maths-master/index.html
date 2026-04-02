@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maths Master - Jedi Calculation Quest</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- ==================== TITLE SCREEN ==================== -->
+    <div id="title-screen" class="screen active">
+        <div class="stars-bg"></div>
+        <div class="title-content">
+            <div class="title-logo">
+                <div class="title-sub">MATHS MASTER</div>
+                <h1 class="title-main">JEDI CALCULATION<br>QUEST</h1>
+                <div class="title-tagline">Master the Force of Numbers</div>
+            </div>
+            <div class="title-jedi-icon">⚔️</div>
+            <button id="btn-start" class="btn-glow">START MISSION</button>
+            <button id="btn-how-to-play" class="btn-outline">HOW TO PLAY</button>
+        </div>
+    </div>
+
+    <!-- ==================== HOW TO PLAY SCREEN ==================== -->
+    <div id="howto-screen" class="screen">
+        <div class="stars-bg"></div>
+        <div class="howto-content">
+            <h2>📖 How to Play</h2>
+            <div class="howto-steps">
+                <div class="howto-step">
+                    <span class="step-icon">🏃</span>
+                    <p>Your Jedi runs forward automatically through space lanes.</p>
+                </div>
+                <div class="howto-step">
+                    <span class="step-icon">🧮</span>
+                    <p>A math question appears at the top of the screen.</p>
+                </div>
+                <div class="howto-step">
+                    <span class="step-icon">🎯</span>
+                    <p>Use <strong>A / S / D</strong> keys or <strong>tap the lanes</strong> to move to the correct answer.</p>
+                </div>
+                <div class="howto-step">
+                    <span class="step-icon">⚔️</span>
+                    <p>Correct answers upgrade your Jedi equipment!</p>
+                </div>
+                <div class="howto-step">
+                    <span class="step-icon">👾</span>
+                    <p>Answer all 10 questions to face the Boss in each level!</p>
+                </div>
+                <div class="howto-step">
+                    <span class="step-icon">🌟</span>
+                    <p>Complete all 4 levels to become a Maths Master Jedi!</p>
+                </div>
+            </div>
+            <div class="level-info">
+                <h3>Levels</h3>
+                <p>Level 1: Addition ＋ Subtraction −</p>
+                <p>Level 2: Multiplication ×</p>
+                <p>Level 3: Division ÷</p>
+                <p>Level 4: All Operations ＋ − × ÷</p>
+            </div>
+            <button id="btn-back-title" class="btn-outline">BACK</button>
+        </div>
+    </div>
+
+    <!-- ==================== LEVEL SELECT SCREEN ==================== -->
+    <div id="level-screen" class="screen">
+        <div class="stars-bg"></div>
+        <div class="level-content">
+            <h2>SELECT YOUR MISSION</h2>
+            <div class="level-cards">
+                <div class="level-card" data-level="1">
+                    <div class="level-number">LEVEL 1</div>
+                    <div class="level-ops">＋ −</div>
+                    <div class="level-name">Padawan Training</div>
+                    <div class="level-desc">Addition & Subtraction</div>
+                </div>
+                <div class="level-card locked" data-level="2">
+                    <div class="level-number">LEVEL 2</div>
+                    <div class="level-ops">×</div>
+                    <div class="level-name">Knight Trials</div>
+                    <div class="level-desc">Multiplication</div>
+                    <div class="lock-overlay">🔒</div>
+                </div>
+                <div class="level-card locked" data-level="3">
+                    <div class="level-number">LEVEL 3</div>
+                    <div class="level-ops">÷</div>
+                    <div class="level-name">Master Challenge</div>
+                    <div class="level-desc">Division</div>
+                    <div class="lock-overlay">🔒</div>
+                </div>
+                <div class="level-card locked" data-level="4">
+                    <div class="level-number">LEVEL 4</div>
+                    <div class="level-ops">＋ − × ÷</div>
+                    <div class="level-name">Final Showdown</div>
+                    <div class="level-desc">All Operations</div>
+                    <div class="lock-overlay">🔒</div>
+                </div>
+            </div>
+            <button id="btn-back-title2" class="btn-outline">BACK</button>
+        </div>
+    </div>
+
+    <!-- ==================== GAME SCREEN ==================== -->
+    <div id="game-screen" class="screen">
+        <!-- Question HUD -->
+        <div id="game-hud">
+            <div id="hud-level">LEVEL 1</div>
+            <div id="hud-question-box">
+                <div id="hud-question-label">QUESTION</div>
+                <div id="hud-question">5 ＋ 3 = ?</div>
+            </div>
+            <div id="hud-stats">
+                <div id="hud-progress">
+                    <span id="hud-qnum">1</span> / 10
+                </div>
+                <div id="hud-score">
+                    <span class="score-icon">⭐</span>
+                    <span id="score-value">0</span>
+                </div>
+                <div id="hud-streak">
+                    <span class="streak-icon">🔥</span>
+                    <span id="streak-value">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Jedi Equipment Display -->
+        <div id="equipment-display">
+            <div class="equip-slot" id="equip-helmet" title="Helmet">
+                <span class="equip-icon">🎭</span>
+            </div>
+            <div class="equip-slot" id="equip-saber" title="Lightsaber">
+                <span class="equip-icon">🗡️</span>
+            </div>
+            <div class="equip-slot" id="equip-armor" title="Armor">
+                <span class="equip-icon">🛡️</span>
+            </div>
+            <div class="equip-slot" id="equip-boots" title="Boots">
+                <span class="equip-icon">👢</span>
+            </div>
+            <div class="equip-slot" id="equip-force" title="Force Power">
+                <span class="equip-icon">✨</span>
+            </div>
+        </div>
+
+        <!-- Runner Canvas -->
+        <div id="runner-container">
+            <canvas id="game-canvas"></canvas>
+            <!-- Lane touch zones for mobile -->
+            <div id="lane-touch-zones">
+                <div class="lane-zone" data-lane="0"></div>
+                <div class="lane-zone" data-lane="1"></div>
+                <div class="lane-zone" data-lane="2"></div>
+            </div>
+        </div>
+
+        <!-- Feedback Overlay -->
+        <div id="feedback-overlay" class="hidden">
+            <div id="feedback-icon"></div>
+            <div id="feedback-text"></div>
+        </div>
+
+        <!-- Equipment Unlock Notification -->
+        <div id="equip-notification" class="hidden">
+            <div id="equip-notif-icon"></div>
+            <div id="equip-notif-text"></div>
+        </div>
+
+        <!-- Controls hint -->
+        <div id="controls-hint">
+            <span class="key-hint">A</span> Left
+            <span class="key-hint">S</span> Center
+            <span class="key-hint">D</span> Right
+        </div>
+    </div>
+
+    <!-- ==================== BOSS FIGHT SCREEN ==================== -->
+    <div id="boss-screen" class="screen">
+        <div class="stars-bg"></div>
+        <div id="boss-arena">
+            <div id="boss-hud">
+                <div id="boss-hp-bar">
+                    <div id="boss-hp-fill"></div>
+                    <span id="boss-hp-text">BOSS HP</span>
+                </div>
+                <div id="boss-question-box">
+                    <div id="boss-question">? × ? = ?</div>
+                </div>
+            </div>
+            <div id="boss-visual">
+                <div id="boss-character">👾</div>
+                <div id="boss-jedi">⚔️</div>
+            </div>
+            <div id="boss-answers">
+                <button class="boss-answer-btn" data-idx="0"></button>
+                <button class="boss-answer-btn" data-idx="1"></button>
+                <button class="boss-answer-btn" data-idx="2"></button>
+            </div>
+            <div id="boss-feedback" class="hidden"></div>
+        </div>
+    </div>
+
+    <!-- ==================== VICTORY SCREEN ==================== -->
+    <div id="victory-screen" class="screen">
+        <div class="stars-bg"></div>
+        <div class="victory-content">
+            <div id="victory-type-icon">🏆</div>
+            <h2 id="victory-title">LEVEL COMPLETE!</h2>
+            <div id="victory-stats">
+                <p>Score: <span id="v-score">0</span></p>
+                <p>Accuracy: <span id="v-accuracy">0</span>%</p>
+                <p>Best Streak: <span id="v-streak">0</span></p>
+            </div>
+            <div id="victory-equip">
+                <h3>Equipment Earned</h3>
+                <div id="v-equip-list"></div>
+            </div>
+            <button id="btn-next-level" class="btn-glow">NEXT LEVEL</button>
+            <button id="btn-back-levels" class="btn-outline">LEVEL SELECT</button>
+        </div>
+    </div>
+
+    <!-- ==================== FINAL VICTORY SCREEN ==================== -->
+    <div id="final-screen" class="screen">
+        <div class="stars-bg"></div>
+        <div class="final-content">
+            <div class="final-celebration">🌟</div>
+            <h1>MATHS MASTER JEDI!</h1>
+            <p class="final-subtitle">You have mastered the Force of Numbers!</p>
+            <div id="final-jedi-display">
+                <div class="final-jedi-char">🧝</div>
+                <div id="final-equip-showcase"></div>
+            </div>
+            <div id="final-stats">
+                <p>Total Score: <span id="f-total-score">0</span></p>
+                <p>Overall Accuracy: <span id="f-accuracy">0</span>%</p>
+            </div>
+            <button id="btn-play-again" class="btn-glow">PLAY AGAIN</button>
+        </div>
+    </div>
+
+    <!-- ==================== GAME OVER SCREEN ==================== -->
+    <div id="gameover-screen" class="screen">
+        <div class="stars-bg"></div>
+        <div class="gameover-content">
+            <div class="gameover-icon">💀</div>
+            <h2>MISSION FAILED</h2>
+            <p class="gameover-msg">The dark side was too strong this time...</p>
+            <div id="gameover-stats">
+                <p>Score: <span id="go-score">0</span></p>
+                <p>Questions Answered: <span id="go-answered">0</span> / 10</p>
+            </div>
+            <button id="btn-retry" class="btn-glow">RETRY</button>
+            <button id="btn-go-levels" class="btn-outline">LEVEL SELECT</button>
+        </div>
+    </div>
+
+    <script src="js/audio.js"></script>
+    <script src="js/questions.js"></script>
+    <script src="js/runner.js"></script>
+    <script src="js/boss.js"></script>
+    <script src="js/game.js"></script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game Library — Login</title>
+  <link rel="stylesheet" href="/css/auth.css">
+</head>
+<body>
+  <div class="auth-container">
+    <div class="auth-header">
+      <h1>🏛️ 遊戲書庫</h1>
+      <p>Game Library</p>
+    </div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" data-tab="login">Login</button>
+      <button class="auth-tab" data-tab="register">Register</button>
+    </div>
+
+    <!-- Login Form -->
+    <form id="login-form" class="auth-form active" novalidate>
+      <div id="login-msg" class="auth-message"></div>
+      <div class="form-group">
+        <label for="login-email">Email</label>
+        <input type="email" id="login-email" autocomplete="email" required>
+        <div class="field-error" id="login-email-err"></div>
+      </div>
+      <div class="form-group">
+        <label for="login-password">Password</label>
+        <input type="password" id="login-password" autocomplete="current-password" required>
+        <div class="field-error" id="login-password-err"></div>
+      </div>
+      <button type="submit" class="btn btn-primary" id="login-btn">Login</button>
+    </form>
+
+    <!-- Register Form -->
+    <form id="register-form" class="auth-form" novalidate>
+      <div id="register-msg" class="auth-message"></div>
+      <div class="form-group">
+        <label for="reg-name">Display Name</label>
+        <input type="text" id="reg-name" maxlength="50" autocomplete="name" required>
+        <div class="field-error" id="reg-name-err"></div>
+      </div>
+      <div class="form-group">
+        <label for="reg-email">Email</label>
+        <input type="email" id="reg-email" autocomplete="email" required>
+        <div class="field-error" id="reg-email-err"></div>
+      </div>
+      <div class="form-group">
+        <label for="reg-password">Password</label>
+        <input type="password" id="reg-password" autocomplete="new-password" required>
+        <div class="pw-strength" id="pw-strength">
+          <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+        </div>
+        <div class="pw-strength-text" id="pw-strength-text"></div>
+        <div class="field-error" id="reg-password-err"></div>
+      </div>
+      <div class="form-group">
+        <label for="reg-confirm">Confirm Password</label>
+        <input type="password" id="reg-confirm" autocomplete="new-password" required>
+        <div class="field-error" id="reg-confirm-err"></div>
+      </div>
+      <button type="submit" class="btn btn-primary" id="register-btn">Create Account</button>
+    </form>
+  </div>
+
+  <script src="/js/auth.js"></script>
+</body>
+</html>

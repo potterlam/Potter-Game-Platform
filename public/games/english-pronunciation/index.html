@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Pronunciation Adventure</title>
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Data & core modules (order matters: no deps first) -->
+    <script src="data/words.js" defer></script>
+    <script src="js/translations.js" defer></script>
+    <script src="js/audio.js" defer></script>
+    <script src="js/screens.js" defer></script>
+
+    <!-- Game modules -->
+    <script src="js/games/word-puzzle.js" defer></script>
+    <script src="js/games/sword-slash.js" defer></script>
+    <script src="js/games/multiple-choice.js" defer></script>
+    <script src="js/games/boss-fight.js" defer></script>
+
+    <!-- System + init (depends on everything above) -->
+    <script src="js/game-system.js" defer></script>
+    <script src="js/app.js" defer></script>
+</head>
+<body>
+
+    <!-- ═══════ Audio elements ═══════ -->
+    <audio id="bgmAudio" loop>
+        <source src="assets/audio/bgm.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="clickSound" preload="auto"><source src="assets/audio/click.mp3" type="audio/mpeg"></audio>
+    <audio id="correctSound" preload="auto"><source src="assets/audio/correct.mp3" type="audio/mpeg"></audio>
+    <audio id="wrongSound" preload="auto"><source src="assets/audio/wrong.mp3" type="audio/mpeg"></audio>
+
+    <!-- ═══════ Loading Screen ═══════ -->
+    <div id="loadingScreen">
+        <div class="loading-spinner"></div>
+        <h2>🎮 English Pronunciation Adventure</h2>
+        <p>Loading…</p>
+    </div>
+
+    <!-- ═══════ Top Controls ═══════ -->
+    <div class="top-controls">
+        <button id="languageToggle" class="lang-btn">🌐 English</button>
+        <button id="settingsBtn" class="btn-icon" title="Settings">⚙️</button>
+        <button id="achievementBtn" class="btn-icon achievement-btn" title="Artifacts">🏆</button>
+    </div>
+
+    <!-- ═══════ Main Menu ═══════ -->
+    <div id="mainMenuScreen" class="screen">
+        <div class="menu-card">
+            <h1 id="gameTitle" class="neon-title">🎭 英語發音冒險</h1>
+            <div class="menu-btns">
+                <button id="startGameBtn" class="btn-primary">🚀 開始冒險</button>
+                <button id="openSettingsBtn" class="btn-secondary">⚙️ 設定</button>
+                <button id="instructionsBtn" class="btn-secondary">📚 遊戲說明</button>
+                <button id="creditsBtn" class="btn-secondary">🏆 製作團隊</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════ Intro (4 Scenes) ═══════ -->
+    <div id="introScreen" class="screen intro-screen scene-bg-1">
+        <div class="intro-card">
+            <div class="intro-icon" id="introIcon">✨</div>
+            <h2 class="intro-title" id="introTitle"></h2>
+            <p class="intro-text" id="introText"></p>
+            <div class="intro-dots" id="introDots"></div>
+            <div class="intro-btns">
+                <button id="introNextBtn" class="btn-primary">▶️ 繼續</button>
+                <button id="introSkipBtn" class="btn-secondary btn-sm">⏭️ 跳過介紹</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════ Fairy Rules Screen ═══════ -->
+    <div id="rulesScreen" class="screen rules-screen">
+        <div class="rules-card">
+            <div class="fairy-wrap" id="fairyWrap">
+                <span class="fairy-sprite">🧚</span>
+            </div>
+            <div class="fairy-bubble" id="fairyBubble"></div>
+            <div class="rules-body" id="rulesBody"></div>
+            <div class="rules-dots" id="rulesDots"></div>
+            <div class="rules-btns">
+                <button id="rulesNextBtn" class="btn-primary">▶️ 繼續</button>
+                <button id="rulesSkipBtn" class="btn-secondary btn-sm">⏭️ 跳過</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════ Game Menu ═══════ -->
+    <div id="gameMenuScreen" class="screen">
+        <div class="menu-card">
+            <h1 id="gameMenuTitle">🎮 選擇你的挑戰</h1>
+
+            <!-- Practice Mode Selector -->
+            <div class="mode-selector">
+                <button class="mode-tab active" id="modePastTense" data-mode="pastTense">
+                    <span class="mode-icon">📝</span>
+                    <span class="mode-label" id="modePTLabel">過去式 -ed</span>
+                </button>
+                <button class="mode-tab" id="modeExtension" data-mode="extension">
+                    <span class="mode-icon">📚</span>
+                    <span class="mode-label" id="modeExtLabel">s / es / ies</span>
+                </button>
+            </div>
+            <p class="mode-desc" id="modeDesc">練習過去式 -ed 的發音分類：/t/、/d/、/ɪd/</p>
+
+            <div class="game-grid">
+                <div class="game-card" id="wordPuzzleBtn">
+                    <h3 id="g1Title">📰 文字謎題</h3>
+                    <p id="g1Desc">解開報紙風格的文字謎題</p>
+                </div>
+                <div class="game-card locked" id="swordSlashBtn">
+                    <h3 id="g2Title">⚔️ 落字劍斬</h3>
+                    <p id="g2Desc">用正確的劍斬落文字</p>
+                </div>
+                <div class="game-card locked" id="multipleChoiceBtn">
+                    <h3 id="g3Title">🎵 發音選擇題</h3>
+                    <p id="g3Desc">聽音辨別正確發音</p>
+                </div>
+                <div class="game-card locked" id="bossFightBtn">
+                    <h3 id="g4Title">👑 Boss 決戰</h3>
+                    <p id="g4Desc">射擊文字泡泡打敗Boss！</p>
+                </div>
+            </div>
+            <button id="gameMenuBackBtn" class="btn-secondary">🏠 返回主選單</button>
+        </div>
+    </div>
+
+    <!-- ═══════ Game Container ═══════ -->
+    <div id="gameContainer" class="screen">
+        <div id="gameContent" class="game-content"></div>
+    </div>
+
+    <!-- ═══════ Ending Screen ═══════ -->
+    <div id="endingScreen" class="screen">
+        <div class="ending-card">
+            <video id="endingVideo" class="ending-video" preload="metadata" playsinline>
+                <source src="assets/video/ending.mp4" type="video/mp4">
+            </video>
+            <div class="ending-trophy">🏆</div>
+            <h1 id="endTitle">🎉 冒險完成！</h1>
+            <p id="endDesc">您已成為真正的發音大師！</p>
+            <div class="ending-artifacts" id="endingArtifacts">
+                <span class="artifact-badge">🔵 時空控制器</span>
+                <span class="artifact-badge">🔴 知識寶石</span>
+                <span class="artifact-badge">🟢 探索者之眼</span>
+            </div>
+            <div class="ending-btns">
+                <button id="playAgainBtn" class="btn-primary">🔄 重新開始</button>
+                <button id="endBackBtn" class="btn-secondary">🏠 返回主選單</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════ Settings Panel ═══════ -->
+    <div id="settingsPanel" class="settings-overlay">
+        <div class="settings-card">
+            <h2 id="settingsTitle" class="settings-title">⚙️ 設定</h2>
+
+            <div class="settings-row">
+                <label class="settings-label" id="bgmLabel">🎵 背景音樂</label>
+                <div class="settings-slider-wrap">
+                    <input type="range" id="bgmSlider" class="settings-slider" min="0" max="100" value="3">
+                    <span id="bgmValue" class="settings-value">3%</span>
+                </div>
+            </div>
+
+            <div class="settings-row">
+                <label class="settings-label" id="sfxLabel">🔊 音效</label>
+                <div class="settings-slider-wrap">
+                    <input type="range" id="sfxSlider" class="settings-slider" min="0" max="100" value="15">
+                    <span id="sfxValue" class="settings-value">15%</span>
+                </div>
+            </div>
+
+            <button id="settingsCloseBtn" class="btn-primary">✖ 關閉</button>
+        </div>
+    </div>
+
+    <!-- ═══════ Achievement / Artifact Panel ═══════ -->
+    <div id="achievementPanel" class="achievement-overlay">
+        <div class="achievement-card">
+            <h2 id="achieveTitle" class="achieve-title">🏆 收集的神器</h2>
+            <div class="artifact-grid" id="artifactGrid">
+                <div class="artifact-item" id="artifactT">
+                    <img src="assets/images/artifact-time-controller.png" alt="Time Controller" class="artifact-img">
+                    <div class="artifact-name" id="artifactTName">時空控制器</div>
+                    <div class="artifact-status" id="artifactTStatus">❌ 尚未收集</div>
+                </div>
+                <div class="artifact-item" id="artifactD">
+                    <img src="assets/images/artifact-knowledge-gem.png" alt="Knowledge Gem" class="artifact-img">
+                    <div class="artifact-name" id="artifactDName">知識寶石</div>
+                    <div class="artifact-status" id="artifactDStatus">❌ 尚未收集</div>
+                </div>
+                <div class="artifact-item" id="artifactID">
+                    <img src="assets/images/artifact-explorers-eye.png" alt="Explorer's Eye" class="artifact-img">
+                    <div class="artifact-name" id="artifactIDName">探索者之眼</div>
+                    <div class="artifact-status" id="artifactIDStatus">❌ 尚未收集</div>
+                </div>
+            </div>
+            <div class="artifact-all" id="artifactAllWrap" style="display:none">
+                <img src="assets/images/all-artifacts-ready.png" alt="All Artifacts" class="artifact-all-img">
+                <p id="artifactAllText">✨ 已收集所有神器！</p>
+            </div>
+            <button id="achieveCloseBtn" class="btn-primary">✖ 關閉</button>
+        </div>
+    </div>
+
+    <!-- ═══════ Cutscene Overlay ═══════ -->
+    <div id="cutsceneOverlay" class="cutscene-overlay">
+        <div class="cs-card">
+            <h2 id="csTitle" class="cs-title"></h2>
+            <p id="csText" class="cs-text"></p>
+            <button id="csContinueBtn" class="btn-primary">▶️ 繼續</button>
+        </div>
+    </div>
+
+</body>
+</html>

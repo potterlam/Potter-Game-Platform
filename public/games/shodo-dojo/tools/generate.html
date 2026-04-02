@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>書道場 — 自訂題庫產生器 / Shodo Dojo — Custom Stage Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+TC:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --wood-dark: #2d1810;
+      --wood-medium: #4a2c1a;
+      --rice-paper: #f5f0e1;
+      --rice-paper-dark: #e8dcc8;
+      --ink: #1a1a1a;
+      --accent-red: #c41e3a;
+      --accent-gold: #d4a017;
+      --bamboo-green: #4a7c59;
+      --correct-green: #2ecc71;
+      --wrong-red: #e74c3c;
+      --font-calligraphy: 'Ma Shan Zheng', cursive;
+      --font-serif: 'Noto Serif TC', serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-serif);
+      background: var(--rice-paper);
+      color: var(--ink);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    h1 {
+      font-family: var(--font-calligraphy);
+      color: var(--accent-red);
+      font-size: 2.2rem;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 24px;
+      font-size: 0.9rem;
+    }
+
+    /* Input area */
+    .input-section {
+      max-width: 700px;
+      margin: 0 auto 30px;
+      background: #fff;
+      border: 2px solid var(--wood-medium);
+      border-radius: 8px;
+      padding: 20px;
+    }
+    .input-section label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 6px;
+      font-size: 1rem;
+    }
+    .input-section .hint {
+      font-size: 0.8rem;
+      color: #888;
+      margin-bottom: 10px;
+    }
+    #char-input {
+      width: 100%;
+      font-size: 2rem;
+      font-family: var(--font-calligraphy);
+      padding: 12px;
+      border: 2px solid #ccc;
+      border-radius: 6px;
+      text-align: center;
+      letter-spacing: 8px;
+      margin-bottom: 12px;
+    }
+    #char-input:focus { outline: none; border-color: var(--accent-red); }
+
+    .input-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .input-row label { margin-bottom: 0; min-width: 80px; }
+    .input-row input, .input-row select {
+      flex: 1;
+      font-family: var(--font-serif);
+      font-size: 0.9rem;
+      padding: 6px 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .btn {
+      font-family: var(--font-serif);
+      font-size: 0.95rem;
+      padding: 10px 24px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: all 0.2s;
+    }
+    .btn:hover { transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+    .btn-primary { background: var(--accent-red); color: #fff; }
+    .btn-secondary { background: var(--wood-medium); color: #fff; }
+    .btn-gold { background: var(--accent-gold); color: var(--ink); }
+    .btn-green { background: var(--bamboo-green); color: #fff; }
+    .btn-small { padding: 4px 12px; font-size: 0.8rem; }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 12px;
+    }
+
+    /* Status */
+    .status {
+      text-align: center;
+      padding: 8px;
+      font-size: 0.85rem;
+      border-radius: 4px;
+      margin-bottom: 12px;
+      display: none;
+    }
+    .status.show { display: block; }
+    .status.info { background: #d1ecf1; color: #0c5460; }
+    .status.success { background: #d4edda; color: #155724; }
+    .status.error { background: #f8d7da; color: #721c24; }
+
+    /* Cards */
+    .cards-section {
+      max-width: 900px;
+      margin: 0 auto 30px;
+    }
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .section-header h2 {
+      font-family: var(--font-calligraphy);
+      color: var(--wood-medium);
+      font-size: 1.5rem;
+    }
+    .char-count { color: #888; font-size: 0.9rem; }
+
+    .char-card {
+      background: #fff;
+      border: 2px solid var(--rice-paper-dark);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 12px;
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 16px;
+      transition: border-color 0.2s;
+    }
+    .char-card:hover { border-color: var(--accent-gold); }
+    .char-card.loading { opacity: 0.6; }
+    .char-card.error { border-color: var(--wrong-red); }
+
+    .card-char {
+      font-family: var(--font-calligraphy);
+      font-size: 3.5rem;
+      text-align: center;
+      line-height: 1;
+      padding-top: 4px;
+    }
+    .card-char .card-emoji { font-size: 1.2rem; display: block; margin-top: 4px; }
+    .card-char .card-strokes {
+      font-size: 0.75rem;
+      color: #888;
+      font-family: var(--font-serif);
+      margin-top: 4px;
+    }
+
+    .card-fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .card-field {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .card-field.full { grid-column: 1 / -1; }
+    .card-field label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #888;
+      font-weight: 700;
+    }
+    .card-field input, .card-field textarea {
+      font-family: var(--font-serif);
+      font-size: 0.85rem;
+      padding: 5px 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background: var(--rice-paper);
+    }
+    .card-field textarea {
+      resize: vertical;
+      min-height: 50px;
+    }
+    .card-field input:focus, .card-field textarea:focus {
+      outline: none;
+      border-color: var(--accent-red);
+    }
+    .card-field .auto-badge {
+      display: inline-block;
+      background: var(--correct-green);
+      color: #fff;
+      font-size: 0.6rem;
+      padding: 1px 5px;
+      border-radius: 3px;
+      margin-left: 4px;
+    }
+    .card-field .miss-badge {
+      display: inline-block;
+      background: #c0392b;
+      color: #fff;
+      font-size: 0.6rem;
+      padding: 1px 5px;
+      border-radius: 3px;
+      margin-left: 4px;
+    }
+    .card-field input.missing-data {
+      border: 1.5px dashed #c0392b;
+      background: #fff5f5;
+    }
+    .card-actions {
+      grid-column: 1 / -1;
+      display: flex;
+      justify-content: flex-end;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    /* Output */
+    .output-section {
+      max-width: 900px;
+      margin: 0 auto 40px;
+    }
+    .output-section h2 {
+      font-family: var(--font-calligraphy);
+      color: var(--wood-medium);
+      font-size: 1.5rem;
+      margin-bottom: 12px;
+    }
+    #output-code {
+      width: 100%;
+      min-height: 200px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 0.8rem;
+      padding: 16px;
+      border: 2px solid var(--wood-medium);
+      border-radius: 8px;
+      background: #1e1e1e;
+      color: #d4d4d4;
+      resize: vertical;
+    }
+
+    /* Level config */
+    .level-config {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+      padding: 12px;
+      background: var(--rice-paper);
+      border-radius: 6px;
+    }
+    .level-config .card-field input {
+      background: #fff;
+    }
+
+    .btn-lang-toggle {
+      position: fixed;
+      top: 12px;
+      right: 12px;
+      z-index: 100;
+      background: var(--wood-medium);
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      padding: 6px 16px;
+      font-size: 0.85rem;
+      font-family: var(--font-serif);
+      cursor: pointer;
+      font-weight: 700;
+      transition: all 0.2s;
+    }
+    .btn-lang-toggle:hover { background: var(--accent-red); }
+    .btn-back-lobby {
+      position: fixed;
+      top: 12px;
+      left: 12px;
+      z-index: 100;
+      background: var(--wood-medium);
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      padding: 6px 16px;
+      font-size: 0.85rem;
+      font-family: var(--font-serif);
+      cursor: pointer;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-back-lobby:hover { background: var(--accent-red); color: #fff; }
+    .btn-cuhk {
+      font-size: 0.65rem;
+      padding: 2px 8px;
+      border-radius: 3px;
+      background: #2c3e50;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-family: var(--font-serif);
+    }
+    .btn-cuhk:hover { background: #1a252f; }
+    .cuhk-credit {
+      text-align: center;
+      font-size: 0.75rem;
+      color: #888;
+      margin-top: 8px;
+    }
+    .cuhk-credit a { color: var(--accent-red); }
+    @media (max-width: 600px) {
+      .char-card { grid-template-columns: 60px 1fr; }
+      .card-fields { grid-template-columns: 1fr; }
+      .card-char { font-size: 2.5rem; }
+      .level-config { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <a class="btn-back-lobby" href="../index.html" data-i18n="backLobby">🏠 返回書道場</a>
+  <button class="btn-lang-toggle" onclick="toggleLang()" id="btn-lang">EN</button>
+
+  <h1 data-i18n="title">📝 書道場 — 自訂題庫產生器</h1>
+  <p class="subtitle" data-i18n="subtitle">輸入中文字，自動產生書道場遊戲所需嘅全部資料</p>
+  <p class="cuhk-credit" data-i18n="credit">粵拼資料參考 <a href="https://humanum.arts.cuhk.edu.hk/Lexis/lexi-can/" target="_blank">香港中文大學「粵語審音配詞字庫」</a></p>
+
+  <div class="input-section">
+    <label data-i18n="inputLabel">輸入繁體字（可一次輸入多個）</label>
+    <p class="hint" data-i18n="inputHint">直接打字就得，例如：龍鳳舞劍道 — 會自動查詢粵拼、筆畫、部首、解釋等資料</p>
+    <input type="text" id="char-input" data-i18n-placeholder="inputPlaceholder" placeholder="喺呢度打字…" autocomplete="off">
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="generateFromInput()" data-i18n="btnGenerate">🔍 自動產生</button>
+      <button class="btn btn-secondary" onclick="clearAll()" data-i18n="btnClear">🗑️ 清除全部</button>
+    </div>
+    <div class="status" id="status-msg"></div>
+  </div>
+
+  <div class="cards-section" id="cards-section" style="display:none;">
+    <div class="section-header">
+      <h2 data-i18n="cardEditing">📋 字卡編輯</h2>
+      <span class="char-count" id="char-count"></span>
+    </div>
+    <div id="cards-container"></div>
+  </div>
+
+  <div class="output-section" id="output-section" style="display:none;">
+    <h2 data-i18n="outputTitle">📦 產生代碼</h2>
+    <div class="level-config">
+      <div class="card-field">
+        <label data-i18n="levelName">關卡名稱</label>
+        <input type="text" id="level-name" value="自訂關卡" placeholder="例如：詩詞用字">
+      </div>
+      <div class="card-field">
+        <label>Level Name (EN)</label>
+        <input type="text" id="level-name-en" value="Custom Stage" placeholder="e.g. Poetry Words">
+      </div>
+      <div class="card-field">
+        <label data-i18n="levelDesc">關卡描述</label>
+        <input type="text" id="level-desc" value="自訂嘅練習題庫" placeholder="關卡嘅中文描述">
+      </div>
+      <div class="card-field">
+        <label data-i18n="passScore">通關分數</label>
+        <input type="number" id="level-pass" value="1200" min="0" step="100">
+      </div>
+    </div>
+    <div class="btn-row" style="justify-content:flex-start; margin-bottom:12px;">
+      <button class="btn btn-gold" onclick="generateCode()" data-i18n="btnGenerateCode">⚡ 產生 JS 代碼</button>
+      <button class="btn btn-green" onclick="copyCode()" data-i18n="btnCopy">📋 複製代碼</button>
+      <button class="btn btn-secondary" onclick="downloadCode()" data-i18n="btnDownload">💾 下載 JS 檔案</button>
+      <button class="btn btn-primary" onclick="saveToGame()" data-i18n="btnSaveGame">🎮 儲存到遊戲</button>
+    </div>
+    <textarea id="output-code" readonly></textarea>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
+  <script src="js/char-lookup.js"></script>
+  <script>
+    // ── State ────────────────────────────────────────────
+    let charCards = [];
+
+    // ── Main generate function ───────────────────────────
+    async function generateFromInput() {
+      const input = document.getElementById('char-input').value.trim();
+      if (!input) return;
+
+      // Extract unique Chinese characters
+      const chars = [...new Set(input.split('').filter(c => /[\u4e00-\u9fff\u3400-\u4dbf]/.test(c)))];
+      if (chars.length === 0) {
+        showStatus(t('statusNoChar'), 'error');
+        return;
+      }
+
+      showStatus(t('statusGenerating').replace('{n}', chars.length), 'info');
+
+      charCards = [];
+      const container = document.getElementById('cards-container');
+      container.innerHTML = '';
+
+      for (let i = 0; i < chars.length; i++) {
+        const char = chars[i];
+        showStatus(t('statusProcessing') + char + ' (' + (i + 1) + '/' + chars.length + ')', 'info');
+
+        const data = await autoLookup(char);
+        charCards.push(data);
+        container.appendChild(createCard(data, i));
+      }
+
+      document.getElementById('cards-section').style.display = '';
+      document.getElementById('output-section').style.display = '';
+      document.getElementById('char-count').textContent = chars.length + t('charUnit');
+      showStatus(t('statusDone').replace('{n}', chars.length), 'success');
+      generateCode();
+    }
+
+    // ── Auto lookup character data ───────────────────────
+    async function autoLookup(char) {
+      const result = {
+        char: char,
+        jyutping: '',
+        meaning: '',
+        meaningZh: '',
+        radical: '',
+        radicalName: '',
+        strokeCount: 0,
+        emoji: '📝',
+        hints: []
+      };
+
+      // 1. Lookup from built-in dictionary (rich format)
+      const dictEntry = CHAR_DICT[char];
+      if (dictEntry) {
+        result.jyutping = dictEntry.j || '';
+        result.meaning = dictEntry.e || '';
+        result.meaningZh = dictEntry.z || '';
+        result.radical = dictEntry.r || '';
+        result.radicalName = dictEntry.rn || '';
+        result.emoji = dictEntry.em || '📝';
+      }
+
+      // 1b. Fallback to extended dictionary (compact format)
+      if (typeof CHAR_EXT !== 'undefined') {
+        const ext = CHAR_EXT[char];
+        if (ext) {
+          // ext = [jyutping, english, chinese, radical]
+          if (!result.jyutping && ext[0]) result.jyutping = ext[0];
+          if (!result.meaning && ext[1])   result.meaning = ext[1];
+          if (!result.meaningZh && ext[2]) result.meaningZh = ext[2];
+          if (!result.radical && ext[3])   result.radical = ext[3];
+        }
+      }
+
+      // 2. Fetch stroke count from HanziWriter data
+      try {
+        const resp = await fetch('https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0/' + encodeURIComponent(char) + '.json');
+        if (resp.ok) {
+          const data = await resp.json();
+          result.strokeCount = data.strokes ? data.strokes.length : 0;
+        }
+      } catch (e) {
+        console.warn('Could not fetch stroke data for', char);
+      }
+
+      // 3. Auto-generate radical name if we have radical but no name
+      if (result.radical && !result.radicalName) {
+        const rn = RADICAL_NAMES[result.radical];
+        if (rn) result.radicalName = rn;
+      }
+
+      // 4. Auto-generate hints
+      result.hints = autoGenerateHints(result);
+
+      return result;
+    }
+
+    // ── Auto-generate writing hints ──────────────────────
+    function autoGenerateHints(data) {
+      const hints = [];
+      const c = data.char;
+      const sc = data.strokeCount;
+      const rad = data.radical;
+      const radName = data.radicalName;
+
+      // Hint 1: Stroke count based
+      if (sc <= 4) {
+        hints.push('呢個字只有 ' + sc + ' 筆，屬於簡單字，但要寫得工整');
+      } else if (sc <= 10) {
+        hints.push('呢個字有 ' + sc + ' 筆，注意筆順同結構');
+      } else if (sc <= 16) {
+        hints.push('呢個字有 ' + sc + ' 筆，結構較複雜，慢慢寫');
+      } else {
+        hints.push('呢個字有 ' + sc + ' 筆，係高難度字，要有耐性');
+      }
+
+      // Hint 2: Radical based
+      if (rad && radName) {
+        hints.push('部首係「' + rad + '」（' + radName + '）');
+      } else if (rad) {
+        hints.push('部首係「' + rad + '」');
+      }
+
+      // Hint 3: General stroke order reminder
+      if (sc <= 3) {
+        hints.push('記住基本規則：先橫後豎，由上到下');
+      } else if (sc <= 8) {
+        hints.push('留意筆順規則：由左到右，先外後內');
+      } else {
+        hints.push('複雜嘅字要拆開部件嚟寫，每個部分跟返筆順');
+      }
+
+      return hints;
+    }
+
+    // ── Create editable card ─────────────────────────────
+    function createCard(data, index) {
+      const card = document.createElement('div');
+      card.className = 'char-card';
+      card.id = 'card-' + index;
+
+      const hasDict = !!CHAR_DICT[data.char];
+      const hasExt = (typeof CHAR_EXT !== 'undefined') && !!CHAR_EXT[data.char];
+      const autoTag = '<span class="auto-badge">自動</span>';
+      const missTag = '<span class="miss-badge">需填寫</span>';
+      function badge(val) { return val ? autoTag : missTag; }
+      function cls(val) { return val ? '' : ' class="missing-data"'; }
+
+      card.innerHTML =
+        '<div class="card-char">' +
+          '<span>' + data.char + '</span>' +
+          '<span class="card-strokes">' + (data.strokeCount || '?') + ' 畫</span>' +
+          '<input type="text" value="' + esc(data.emoji) + '" ' +
+            'style="width:60px;text-align:center;font-size:1.2rem;margin-top:4px;" ' +
+            'data-field="emoji" data-index="' + index + '" onchange="updateCard(this)">' +
+        '</div>' +
+        '<div class="card-fields">' +
+          '<div class="card-field">' +
+            '<label>' + t('lblJyutping') + ' ' + badge(data.jyutping) + '</label>' +
+            '<input type="text"' + cls(data.jyutping) + ' value="' + esc(data.jyutping) + '" placeholder="例如：lung4" ' +
+              'data-field="jyutping" data-index="' + index + '" onchange="updateCard(this)">' +
+          '</div>' +
+          '<div class="card-field">' +
+            '<label>' + t('lblMeaningEn') + ' ' + badge(data.meaning) + '</label>' +
+            '<input type="text"' + cls(data.meaning) + ' value="' + esc(data.meaning) + '" placeholder="e.g. Dragon" ' +
+              'data-field="meaning" data-index="' + index + '" onchange="updateCard(this)">' +
+          '</div>' +
+          '<div class="card-field">' +
+            '<label>' + t('lblMeaningZh') + ' ' + badge(data.meaningZh) + '</label>' +
+            '<input type="text"' + cls(data.meaningZh) + ' value="' + esc(data.meaningZh) + '" placeholder="例如：龍、神龍" ' +
+              'data-field="meaningZh" data-index="' + index + '" onchange="updateCard(this)">' +
+          '</div>' +
+          '<div class="card-field">' +
+            '<label>' + t('lblRadical') + ' ' + badge(data.radical) + '</label>' +
+            '<input type="text"' + cls(data.radical) + ' value="' + esc(data.radical) + '" placeholder="例如：龍" ' +
+              'data-field="radical" data-index="' + index + '" onchange="updateCard(this)">' +
+          '</div>' +
+          '<div class="card-field">' +
+            '<label>' + t('lblRadicalName') + ' ' + badge(data.radicalName) + '</label>' +
+            '<input type="text"' + cls(data.radicalName) + ' value="' + esc(data.radicalName) + '" placeholder="例如：龍部" ' +
+              'data-field="radicalName" data-index="' + index + '" onchange="updateCard(this)">' +
+          '</div>' +
+          '<div class="card-field">' +
+            '<label>' + t('lblStrokes') + ' ' + badge(data.strokeCount) + '</label>' +
+            '<input type="number" value="' + data.strokeCount + '" min="1" max="40" ' +
+              'data-field="strokeCount" data-index="' + index + '" onchange="updateCard(this)">' +
+          '</div>' +
+          '<div class="card-field full">' +
+            '<label>' + t('lblHint1') + ' ' + autoTag + '</label>' +
+            '<input type="text" value="' + esc(data.hints[0] || '') + '" ' +
+              'data-field="hint0" data-index="' + index + '" onchange="updateCard(this)">' +
+          '</div>' +
+          '<div class="card-field full">' +
+            '<label>' + t('lblHint2') + '</label>' +
+            '<input type="text" value="' + esc(data.hints[1] || '') + '" ' +
+              'data-field="hint1" data-index="' + index + '" onchange="updateCard(this)">' +
+          '</div>' +
+          '<div class="card-field full">' +
+            '<label>' + t('lblHint3') + '</label>' +
+            '<input type="text" value="' + esc(data.hints[2] || '') + '" ' +
+              'data-field="hint2" data-index="' + index + '" onchange="updateCard(this)">' +
+          '</div>' +
+          '<div class="card-actions">' +
+            '<button class="btn-cuhk" onclick="lookupCUHK(\'' + data.char + '\')" title="查 CUHK 粵音字庫">📖 查 CUHK 字庫</button>' +
+            '<button class="btn btn-small btn-gold" onclick="regenerateHints(' + index + ')" data-i18n="btnRegenHints">🔄 重新產生提示</button>' +
+            '<button class="btn btn-small" style="background:var(--wrong-red);color:#fff;" onclick="removeCard(' + index + ')" data-i18n="btnDelete">✕ 刪除</button>' +
+          '</div>' +
+        '</div>';
+
+      return card;
+    }
+
+    // ── Update card data ─────────────────────────────────
+    function updateCard(el) {
+      const idx = parseInt(el.dataset.index);
+      const field = el.dataset.field;
+      if (!charCards[idx]) return;
+
+      if (field === 'hint0') charCards[idx].hints[0] = el.value;
+      else if (field === 'hint1') charCards[idx].hints[1] = el.value;
+      else if (field === 'hint2') charCards[idx].hints[2] = el.value;
+      else if (field === 'strokeCount') charCards[idx][field] = parseInt(el.value) || 0;
+      else charCards[idx][field] = el.value;
+    }
+
+    function regenerateHints(idx) {
+      if (!charCards[idx]) return;
+      charCards[idx].hints = autoGenerateHints(charCards[idx]);
+      const card = document.getElementById('card-' + idx);
+      if (card) {
+        const inputs = card.querySelectorAll('[data-field^="hint"]');
+        inputs.forEach(inp => {
+          const f = inp.dataset.field;
+          const hi = parseInt(f.replace('hint', ''));
+          inp.value = charCards[idx].hints[hi] || '';
+        });
+      }
+    }
+
+    function removeCard(idx) {
+      charCards[idx] = null;
+      const card = document.getElementById('card-' + idx);
+      if (card) card.remove();
+      const active = charCards.filter(c => c !== null);
+      document.getElementById('char-count').textContent = active.length + t('charUnit');
+    }
+
+    // ── Generate JS code ─────────────────────────────────
+    function generateCode() {
+      const active = charCards.filter(c => c !== null);
+      if (active.length === 0) return;
+
+      const name = document.getElementById('level-name').value || '自訂關卡';
+      const nameEn = document.getElementById('level-name-en').value || 'Custom Stage';
+      const desc = document.getElementById('level-desc').value || '自訂嘅練習題庫';
+      const pass = parseInt(document.getElementById('level-pass').value) || 1200;
+
+      let code = '// 自訂題庫 — 由書道場產生器自動產生\n';
+      code += '// 產生日期：' + new Date().toLocaleDateString('zh-HK') + '\n\n';
+      code += 'const CUSTOM_STAGE = {\n';
+      code += '  name: ' + JSON.stringify(name) + ',\n';
+      code += '  nameEn: ' + JSON.stringify(nameEn) + ',\n';
+      code += '  subtitle: ' + JSON.stringify(name) + ',\n';
+      code += '  subtitleEn: ' + JSON.stringify(nameEn) + ',\n';
+      code += '  description: ' + JSON.stringify(desc) + ',\n';
+      code += '  descriptionEn: ' + JSON.stringify(nameEn) + ',\n';
+      code += '  requiredScore: 0,\n';
+      code += '  passScore: ' + pass + ',\n';
+      code += '  characters: [\n';
+
+      active.forEach((c, i) => {
+        const hints = (c.hints || []).filter(h => h && h.trim());
+        code += '    { ';
+        code += 'char: ' + JSON.stringify(c.char) + ', ';
+        code += 'jyutping: ' + JSON.stringify(c.jyutping) + ', ';
+        code += 'meaning: ' + JSON.stringify(c.meaning) + ', ';
+        code += 'meaningZh: ' + JSON.stringify(c.meaningZh) + ', ';
+        code += 'radical: ' + JSON.stringify(c.radical) + ', ';
+        code += 'radicalName: ' + JSON.stringify(c.radicalName) + ', ';
+        code += 'strokeCount: ' + c.strokeCount + ', ';
+        code += 'emoji: ' + JSON.stringify(c.emoji) + ',\n';
+        code += '      hints: ' + JSON.stringify(hints);
+        code += ' }' + (i < active.length - 1 ? ',' : '') + '\n';
+      });
+
+      code += '  ]\n';
+      code += '};\n';
+
+      document.getElementById('output-code').value = code;
+    }
+
+    function copyCode() {
+      generateCode();
+      const el = document.getElementById('output-code');
+      el.select();
+      navigator.clipboard.writeText(el.value).then(() => {
+        showStatus(t('statusCopied'), 'success');
+      });
+    }
+
+    function downloadCode() {
+      generateCode();
+      const code = document.getElementById('output-code').value;
+      const blob = new Blob([code], { type: 'text/javascript' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'custom-stage.js';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function saveToGame() {
+      const active = charCards.filter(c => c !== null);
+      if (active.length === 0) {
+        showStatus(t('statusEmpty'), 'error');
+        return;
+      }
+
+      const data = {
+        name: document.getElementById('level-name').value || '自訂關卡',
+        nameEn: document.getElementById('level-name-en').value || 'Custom Stage',
+        subtitle: document.getElementById('level-name').value || '自訂關卡',
+        subtitleEn: document.getElementById('level-name-en').value || 'Custom Stage',
+        description: document.getElementById('level-desc').value || '自訂嘅練習題庫',
+        descriptionEn: document.getElementById('level-name-en').value || 'Custom Stage',
+        requiredScore: 0,
+        passScore: parseInt(document.getElementById('level-pass').value) || 1200,
+        characters: active.map(c => ({
+          char: c.char,
+          jyutping: c.jyutping,
+          meaning: c.meaning,
+          meaningZh: c.meaningZh,
+          radical: c.radical,
+          radicalName: c.radicalName,
+          strokeCount: c.strokeCount,
+          emoji: c.emoji,
+          hints: (c.hints || []).filter(h => h && h.trim())
+        }))
+      };
+
+      localStorage.setItem('shodo-custom-stage', JSON.stringify(data));
+      showStatus(t('statusSaved'), 'success');
+    }
+
+    // ── Helpers ──────────────────────────────────────────
+    function esc(str) {
+      return (str || '').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+    }
+
+    function showStatus(msg, type) {
+      const el = document.getElementById('status-msg');
+      el.textContent = msg;
+      el.className = 'status show ' + type;
+    }
+
+    function clearAll() {
+      charCards = [];
+      document.getElementById('char-input').value = '';
+      document.getElementById('cards-container').innerHTML = '';
+      document.getElementById('cards-section').style.display = 'none';
+      document.getElementById('output-section').style.display = 'none';
+      document.getElementById('status-msg').className = 'status';
+    }
+
+    // Enter key triggers generate
+    document.getElementById('char-input').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') generateFromInput();
+    });
+
+    // ── CUHK Dictionary lookup (opens in new tab) ────────
+    function lookupCUHK(char) {
+      // The CUHK site uses Big5 encoding. We submit via a hidden form
+      // with accept-charset="big5" to let the browser handle encoding.
+      const form = document.createElement('form');
+      form.method = 'get';
+      form.action = 'https://humanum.arts.cuhk.edu.hk/Lexis/lexi-can/search.php';
+      form.target = '_blank';
+      form.acceptCharset = 'big5';
+      form.style.display = 'none';
+      const input = document.createElement('input');
+      input.name = 'q';
+      input.value = char;
+      form.appendChild(input);
+      document.body.appendChild(form);
+      form.submit();
+      document.body.removeChild(form);
+    }
+
+    // ── i18n system ──────────────────────────────────────
+    let currentLang = 'zh';
+
+    const I18N = {
+      zh: {
+        title: '📝 書道場 — 自訂題庫產生器',
+        subtitle: '輸入中文字，自動產生書道場遊戲所需嘅全部資料',
+        credit: '粵拼資料參考 <a href="https://humanum.arts.cuhk.edu.hk/Lexis/lexi-can/" target="_blank">香港中文大學「粵語審音配詞字庫」</a>',
+        backLobby: '🏠 返回書道場',
+        inputLabel: '輸入繁體字（可一次輸入多個）',
+        inputHint: '直接打字就得，例如：龍鳳舞劍道 — 會自動查詢粵拼、筆畫、部首、解釋等資料',
+        inputPlaceholder: '喺呢度打字…',
+        btnGenerate: '🔍 自動產生',
+        btnClear: '🗑️ 清除全部',
+        cardEditing: '📋 字卡編輯',
+        outputTitle: '📦 產生代碼',
+        levelName: '關卡名稱',
+        levelDesc: '關卡描述',
+        passScore: '通關分數',
+        btnGenerateCode: '⚡ 產生 JS 代碼',
+        btnCopy: '📋 複製代碼',
+        btnDownload: '💾 下載 JS 檔案',
+        btnSaveGame: '🎮 儲存到遊戲',
+        btnRegenHints: '🔄 重新產生提示',
+        btnDelete: '✕ 刪除',
+        lblJyutping: '粵拼',
+        lblMeaningEn: '英文意思',
+        lblMeaningZh: '中文意思',
+        lblRadical: '部首',
+        lblRadicalName: '部首名稱',
+        lblStrokes: '筆畫數',
+        lblHint1: '提示 1',
+        lblHint2: '提示 2',
+        lblHint3: '提示 3',
+        charUnit: ' 個字',
+        statusProcessing: '正在處理：',
+        statusGenerating: '正在自動產生 {n} 個字嘅資料…',
+        statusDone: '✅ 已產生 {n} 個字嘅資料！可以編輯後再產生代碼。',
+        statusNoChar: '搵唔到中文字，請輸入繁體中文',
+        statusCopied: '✅ 代碼已複製到剪貼板！',
+        statusSaved: '✅ 已儲存到遊戲！返回書道場嘅「選擇修行階段」就會見到自訂關卡。',
+        statusEmpty: '冇任何字卡可以儲存'
+      },
+      en: {
+        title: '📝 Shodo Dojo — Custom Stage Generator',
+        subtitle: 'Type Chinese characters to auto-generate all game data',
+        credit: 'Jyutping data referenced from <a href="https://humanum.arts.cuhk.edu.hk/Lexis/lexi-can/" target="_blank">CUHK Cantonese Pronunciation Dictionary</a>',
+        backLobby: '🏠 Back to Dojo',
+        inputLabel: 'Enter Traditional Chinese Characters (multiple OK)',
+        inputHint: 'Just type, e.g. 龍鳳舞劍道 — Jyutping, strokes, radicals, meanings will be auto-filled',
+        inputPlaceholder: 'Type characters here…',
+        btnGenerate: '🔍 Auto Generate',
+        btnClear: '🗑️ Clear All',
+        cardEditing: '📋 Card Editor',
+        outputTitle: '📦 Generated Code',
+        levelName: 'Stage Name',
+        levelDesc: 'Description',
+        passScore: 'Pass Score',
+        btnGenerateCode: '⚡ Generate JS Code',
+        btnCopy: '📋 Copy Code',
+        btnDownload: '💾 Download JS File',
+        btnSaveGame: '🎮 Save to Game',
+        btnRegenHints: '🔄 Regen Hints',
+        btnDelete: '✕ Delete',
+        lblJyutping: 'Jyutping',
+        lblMeaningEn: 'English Meaning',
+        lblMeaningZh: 'Chinese Meaning',
+        lblRadical: 'Radical',
+        lblRadicalName: 'Radical Name',
+        lblStrokes: 'Strokes',
+        lblHint1: 'Hint 1',
+        lblHint2: 'Hint 2',
+        lblHint3: 'Hint 3',
+        charUnit: ' chars',
+        statusProcessing: 'Processing: ',
+        statusGenerating: 'Auto-generating data for {n} characters…',
+        statusDone: '✅ Generated data for {n} characters! Edit and then generate code.',
+        statusNoChar: 'No Chinese characters found. Please enter Traditional Chinese.',
+        statusCopied: '✅ Code copied to clipboard!',
+        statusSaved: '✅ Saved to game! Go back to Shodo Dojo level select to see the custom stage.',
+        statusEmpty: 'No cards to save'
+      }
+    };
+
+    function t(key) {
+      return (I18N[currentLang] && I18N[currentLang][key]) || (I18N.zh[key]) || key;
+    }
+
+    function toggleLang() {
+      currentLang = currentLang === 'zh' ? 'en' : 'zh';
+      document.getElementById('btn-lang').textContent = currentLang === 'zh' ? 'EN' : '中文';
+      applyI18n();
+    }
+
+    function applyI18n() {
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.dataset.i18n;
+        const val = t(key);
+        if (val) el.innerHTML = val;
+      });
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.dataset.i18nPlaceholder;
+        const val = t(key);
+        if (val) el.placeholder = val;
+      });
+      // Update char count if visible
+      const active = charCards.filter(c => c !== null);
+      if (active.length > 0) {
+        document.getElementById('char-count').textContent = active.length + t('charUnit');
+      }
+    }
+  </script>
+</body>
+</html>
