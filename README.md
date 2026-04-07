@@ -1,6 +1,7 @@
 # 🎮 Potter Game Platform
 
 An educational game portal with user authentication, an admin dashboard, and a beautiful **bookshelf-style** game library. Built with Node.js + Express, secured with JWT auth, and backed by Neon PostgreSQL.
+
 https://potter-game-platform.onrender.com
 
 ## ✨ Features
